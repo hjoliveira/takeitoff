@@ -8,27 +8,26 @@ local defaults = {
     itemIDs = {},  -- List of item IDs to watch for
 }
 
--- Equipment slot IDs (1-19)
+-- Equipment slot IDs
 local EQUIPMENT_SLOTS = {
-    INVSLOT_HEAD,           -- 1
-    INVSLOT_NECK,           -- 2
-    INVSLOT_SHOULDER,       -- 3
-    INVSLOT_BODY,           -- 4 (shirt)
-    INVSLOT_CHEST,          -- 5
-    INVSLOT_WAIST,          -- 6
-    INVSLOT_LEGS,           -- 7
-    INVSLOT_FEET,           -- 8
-    INVSLOT_WRIST,          -- 9
-    INVSLOT_HAND,           -- 10
-    INVSLOT_FINGER1,        -- 11
-    INVSLOT_FINGER2,        -- 12
-    INVSLOT_TRINKET1,       -- 13
-    INVSLOT_TRINKET2,       -- 14
-    INVSLOT_BACK,           -- 15
-    INVSLOT_MAINHAND,       -- 16
-    INVSLOT_OFFHAND,        -- 17
-    INVSLOT_RANGED,         -- 18
-    INVSLOT_TABARD,         -- 19
+    1,  -- Head
+    2,  -- Neck
+    3,  -- Shoulder
+    4,  -- Shirt
+    5,  -- Chest
+    6,  -- Waist
+    7,  -- Legs
+    8,  -- Feet
+    9,  -- Wrist
+    10, -- Hands
+    11, -- Finger 1
+    12, -- Finger 2
+    13, -- Trinket 1
+    14, -- Trinket 2
+    15, -- Back
+    16, -- Main Hand
+    17, -- Off Hand
+    19, -- Tabard
 }
 
 -- Create the warning frame
@@ -39,11 +38,11 @@ warningFrame:SetFrameStrata("HIGH")
 warningFrame:Hide()
 
 -- Create the warning text
-local warningText = warningFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
+local warningText = warningFrame:CreateFontString(nil, "OVERLAY")
 warningText:SetPoint("CENTER", warningFrame, "CENTER", 0, 0)
+warningText:SetFont("Fonts\\FRIZQT__.TTF", 48, "OUTLINE")
 warningText:SetText("TAKE IT OFF")
 warningText:SetTextColor(1, 0, 0, 1)  -- Red color
-warningText:SetFont(warningText:GetFont(), 48, "OUTLINE")
 
 -- Create the main event frame
 local eventFrame = CreateFrame("Frame", "TakeItOffEventFrame", UIParent)
