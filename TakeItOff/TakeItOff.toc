@@ -3,6 +3,7 @@
 ## Notes: Alerts you when specific items are equipped
 ## Author: hjoliveira
 ## Version: 1.2.0
+## IconTexture: Interface\Icons\INV_Misc_Bell_01
 ## SavedVariables: TakeItOffDB
 
 TakeItOff.lua
