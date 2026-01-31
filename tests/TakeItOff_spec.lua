@@ -393,6 +393,22 @@ describe("TakeItOff Addon", function()
             assert.is_false(foundLink)
         end)
 
+        it("should fall back to 'Unknown Item' when item info is completely unavailable", function()
+            loadAddon()
+            -- Simulate item not being cached at all (GetItemInfo returns nil)
+            WoWMock.setItemInfoAvailable(false)
+            WoWMock.clearPrintOutput()
+            WoWMock.runSlashCommand("add 99999")
+            local foundUnknown = false
+            for _, msg in ipairs(WoWMock.printOutput) do
+                if msg:find("Unknown Item") and msg:find("Added item") then
+                    foundUnknown = true
+                    break
+                end
+            end
+            assert.is_true(foundUnknown)
+        end)
+
         it("should use item link format with brackets", function()
             loadAddon()
             WoWMock.clearPrintOutput()

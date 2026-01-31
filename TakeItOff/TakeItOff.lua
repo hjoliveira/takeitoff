@@ -10,14 +10,14 @@ local defaults = {
 
 -- Get a clickable item link, falling back to item name if unavailable
 local function GetItemLinkOrName(itemID)
-    -- Try to get the full item link (clickable)
-    local itemLink = C_Item.GetItemLink(itemID)
+    -- Try to get the full item link (clickable) using GetItemInfo
+    -- GetItemInfo returns: itemName, itemLink, itemQuality, ...
+    local itemName, itemLink = GetItemInfo(itemID)
     if itemLink then
         return itemLink
     end
 
-    -- Fall back to item name if link isn't available
-    local itemName = C_Item.GetItemNameByID(itemID)
+    -- Fall back to item name if link isn't available yet (item not cached)
     if itemName then
         return itemName
     end
