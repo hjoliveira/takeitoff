@@ -9,6 +9,7 @@ TakeItOffAddon = addon
 -- Default database
 local defaults = {
     itemIDs = {},  -- List of item IDs to watch for
+    warningText = "TAKE IT OFF",  -- Customizable warning text
 }
 
 -- Get a clickable item link, falling back to item name if unavailable
@@ -97,6 +98,25 @@ local function CheckEquippedItems()
     end
 end
 
+-- Update the warning text
+local function SetWarningText(text)
+    if not text or text == "" then
+        text = defaults.warningText
+    end
+    TakeItOffDB.warningText = text
+    warningText:SetText(text)
+end
+
+-- Get the current warning text
+local function GetWarningText()
+    return TakeItOffDB and TakeItOffDB.warningText or defaults.warningText
+end
+
+-- Get the default warning text
+local function GetDefaultWarningText()
+    return defaults.warningText
+end
+
 -- Initialize the addon
 local function InitializeAddon()
     -- Set up SavedVariables
@@ -106,6 +126,12 @@ local function InitializeAddon()
     if not TakeItOffDB.itemIDs then
         TakeItOffDB.itemIDs = {}
     end
+    if not TakeItOffDB.warningText then
+        TakeItOffDB.warningText = defaults.warningText
+    end
+
+    -- Apply saved warning text
+    warningText:SetText(TakeItOffDB.warningText)
 
     -- Initial check
     CheckEquippedItems()
@@ -135,6 +161,9 @@ eventFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 -- Expose functions for settings panel
 addon.GetItemLinkOrName = GetItemLinkOrName
 addon.CheckEquippedItems = CheckEquippedItems
+addon.SetWarningText = SetWarningText
+addon.GetWarningText = GetWarningText
+addon.GetDefaultWarningText = GetDefaultWarningText
 
 -- Slash commands
 SLASH_TAKEITOFF1 = "/takeitoff"
@@ -228,6 +257,21 @@ SlashCmdList["TAKEITOFF"] = function(msg)
             print("|cffff0000TakeItOff:|r Settings panel not available.")
         end
 
+    elseif command == "text" then
+        -- Set custom warning text
+        if arg and arg ~= "" then
+            SetWarningText(arg)
+            print("|cffff0000TakeItOff:|r Warning text set to: " .. arg)
+        else
+            print("|cffff0000TakeItOff:|r Current warning text: " .. GetWarningText())
+            print("|cffff0000TakeItOff:|r Usage: /tio text <your custom text>")
+        end
+
+    elseif command == "resettext" then
+        -- Reset warning text to default
+        SetWarningText(defaults.warningText)
+        print("|cffff0000TakeItOff:|r Warning text reset to default: " .. defaults.warningText)
+
     else
         print("|cffff0000TakeItOff|r Commands:")
         print("  /tio add <itemID> - Add an item to watch")
@@ -235,6 +279,8 @@ SlashCmdList["TAKEITOFF"] = function(msg)
         print("  /tio list - Show all watched items")
         print("  /tio clear - Clear all watched items")
         print("  /tio settings - Open settings panel")
+        print("  /tio text <text> - Set custom warning text")
+        print("  /tio resettext - Reset warning text to default")
         print("  /tio test - Toggle test warning display")
         print("  /tio help - Show this help message")
     end

@@ -22,9 +22,82 @@ local function CreateSettingsPanel()
     desc:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
     desc:SetText("Alerts you when specific items are equipped.")
 
+    -- Warning text label
+    local warningTextLabel = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    warningTextLabel:SetPoint("TOPLEFT", desc, "BOTTOMLEFT", 0, -16)
+    warningTextLabel:SetText("Warning Text:")
+
+    -- Warning text input frame (container for EditBox)
+    local warningTextFrame = CreateFrame("Frame", "TakeItOffWarningTextFrame", panel, "BackdropTemplate")
+    warningTextFrame:SetSize(200, 24)
+    warningTextFrame:SetPoint("LEFT", warningTextLabel, "RIGHT", 8, 0)
+    warningTextFrame:SetBackdrop({
+        bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        edgeSize = 12,
+        insets = { left = 3, right = 3, top = 3, bottom = 3 },
+    })
+    warningTextFrame:SetBackdropColor(0.1, 0.1, 0.1, 0.8)
+    warningTextFrame:SetBackdropBorderColor(0.6, 0.6, 0.6, 1)
+
+    -- Warning text EditBox
+    local warningTextInput = CreateFrame("EditBox", "TakeItOffWarningTextInput", warningTextFrame)
+    warningTextInput:SetSize(190, 20)
+    warningTextInput:SetPoint("CENTER", 0, 0)
+    warningTextInput:SetFontObject(GameFontHighlight)
+    warningTextInput:SetAutoFocus(false)
+    warningTextInput:SetMaxLetters(50)
+
+    -- Set initial text after addon loads
+    warningTextInput:SetScript("OnShow", function(self)
+        if addon.GetWarningText then
+            self:SetText(addon.GetWarningText())
+        end
+    end)
+
+    -- Save on Enter key
+    warningTextInput:SetScript("OnEnterPressed", function(self)
+        local text = self:GetText()
+        if addon.SetWarningText then
+            addon.SetWarningText(text)
+            print("|cffff0000TakeItOff:|r Warning text set to: " .. (text ~= "" and text or addon.GetDefaultWarningText()))
+        end
+        self:ClearFocus()
+    end)
+
+    -- Save on focus lost
+    warningTextInput:SetScript("OnEditFocusLost", function(self)
+        local text = self:GetText()
+        if addon.SetWarningText then
+            addon.SetWarningText(text)
+        end
+    end)
+
+    -- Escape key clears focus
+    warningTextInput:SetScript("OnEscapePressed", function(self)
+        if addon.GetWarningText then
+            self:SetText(addon.GetWarningText())
+        end
+        self:ClearFocus()
+    end)
+
+    -- Reset button
+    local resetTextBtn = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+    resetTextBtn:SetSize(60, 22)
+    resetTextBtn:SetPoint("LEFT", warningTextFrame, "RIGHT", 8, 0)
+    resetTextBtn:SetText("Reset")
+    resetTextBtn:SetScript("OnClick", function()
+        if addon.SetWarningText and addon.GetDefaultWarningText then
+            local defaultText = addon.GetDefaultWarningText()
+            addon.SetWarningText(defaultText)
+            warningTextInput:SetText(defaultText)
+            print("|cffff0000TakeItOff:|r Warning text reset to default: " .. defaultText)
+        end
+    end)
+
     -- Instructions
     local instructions = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-    instructions:SetPoint("TOPLEFT", desc, "BOTTOMLEFT", 0, -16)
+    instructions:SetPoint("TOPLEFT", warningTextLabel, "BOTTOMLEFT", 0, -16)
     instructions:SetText("Drag and drop items here to add them to the watch list:")
 
     -- Drop zone frame
