@@ -8,6 +8,7 @@ WoWMock.equippedItems = {}
 WoWMock.frames = {}
 WoWMock.events = {}
 WoWMock.slashCommands = {}
+WoWMock.itemLinkAvailable = true  -- Controls whether GetItemLink returns a link or nil
 
 -- Reset all mock state
 function WoWMock.reset()
@@ -16,6 +17,7 @@ function WoWMock.reset()
     WoWMock.events = {}
     WoWMock.slashCommands = {}
     WoWMock.printOutput = {}
+    WoWMock.itemLinkAvailable = true
     _G.TakeItOffDB = nil
     _G.SlashCmdList = {}
     _G.SLASH_TAKEITOFF1 = nil
@@ -146,6 +148,10 @@ function WoWMock.install()
             return "Test Item " .. tostring(itemID)
         end,
         GetItemLink = function(itemID)
+            -- Return nil if item link is not available (simulates uncached item)
+            if not WoWMock.itemLinkAvailable then
+                return nil
+            end
             -- Return a simulated item link format
             return "|cffffffff|Hitem:" .. tostring(itemID) .. "::::::::::::|h[Test Item " .. tostring(itemID) .. "]|h|r"
         end
@@ -201,6 +207,11 @@ end
 -- Helper to clear print output
 function WoWMock.clearPrintOutput()
     WoWMock.printOutput = {}
+end
+
+-- Helper to set whether item links are available (simulates cached/uncached items)
+function WoWMock.setItemLinkAvailable(available)
+    WoWMock.itemLinkAvailable = available
 end
 
 return WoWMock

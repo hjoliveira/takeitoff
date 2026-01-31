@@ -310,4 +310,104 @@ describe("TakeItOff Addon", function()
 
     end)
 
+    describe("Item links", function()
+
+        it("should display item link in add command message", function()
+            loadAddon()
+            WoWMock.clearPrintOutput()
+            WoWMock.runSlashCommand("add 19019")
+            local foundLink = false
+            for _, msg in ipairs(WoWMock.printOutput) do
+                -- Check for item link format |Hitem:
+                if msg:find("|Hitem:19019") and msg:find("Added item") then
+                    foundLink = true
+                    break
+                end
+            end
+            assert.is_true(foundLink)
+        end)
+
+        it("should display item link in remove command message", function()
+            loadAddon()
+            WoWMock.runSlashCommand("add 19019")
+            WoWMock.clearPrintOutput()
+            WoWMock.runSlashCommand("remove 19019")
+            local foundLink = false
+            for _, msg in ipairs(WoWMock.printOutput) do
+                if msg:find("|Hitem:19019") and msg:find("Removed item") then
+                    foundLink = true
+                    break
+                end
+            end
+            assert.is_true(foundLink)
+        end)
+
+        it("should display item link in list command output", function()
+            loadAddon()
+            WoWMock.runSlashCommand("add 19019")
+            WoWMock.clearPrintOutput()
+            WoWMock.runSlashCommand("list")
+            local foundLink = false
+            for _, msg in ipairs(WoWMock.printOutput) do
+                if msg:find("|Hitem:19019") then
+                    foundLink = true
+                    break
+                end
+            end
+            assert.is_true(foundLink)
+        end)
+
+        it("should display item link in debug command output", function()
+            loadAddon()
+            -- Equip an item
+            WoWMock.equipItem(15, 19019)
+            WoWMock.clearPrintOutput()
+            WoWMock.runSlashCommand("debug")
+            local foundLink = false
+            for _, msg in ipairs(WoWMock.printOutput) do
+                if msg:find("|Hitem:19019") and msg:find("Slot") then
+                    foundLink = true
+                    break
+                end
+            end
+            assert.is_true(foundLink)
+        end)
+
+        it("should fall back to item name when link is unavailable", function()
+            loadAddon()
+            -- Simulate item link not being cached
+            WoWMock.setItemLinkAvailable(false)
+            WoWMock.clearPrintOutput()
+            WoWMock.runSlashCommand("add 19019")
+            local foundName = false
+            local foundLink = false
+            for _, msg in ipairs(WoWMock.printOutput) do
+                if msg:find("Test Item 19019") and msg:find("Added item") then
+                    foundName = true
+                end
+                if msg:find("|Hitem:") then
+                    foundLink = true
+                end
+            end
+            assert.is_true(foundName)
+            assert.is_false(foundLink)
+        end)
+
+        it("should use item link format with brackets", function()
+            loadAddon()
+            WoWMock.clearPrintOutput()
+            WoWMock.runSlashCommand("add 12345")
+            local foundBrackets = false
+            for _, msg in ipairs(WoWMock.printOutput) do
+                -- Item links have [Item Name] format
+                if msg:find("%[Test Item 12345%]") then
+                    foundBrackets = true
+                    break
+                end
+            end
+            assert.is_true(foundBrackets)
+        end)
+
+    end)
+
 end)
