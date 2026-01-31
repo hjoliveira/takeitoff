@@ -1,5 +1,5 @@
 ## Interface: 120000
-## Title: Take It Off
+## Title: hjoliveira
 ## Notes: Alerts you when specific items are equipped
 ## Author: Claude
 ## Version: 1.0.0
