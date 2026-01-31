@@ -15,12 +15,7 @@ local function loadAddon()
         error("Failed to load addon: " .. tostring(err))
     end
 
-    -- Set up the environment with varargs
-    setfenv(chunk, setmetatable({
-        ["..."] = { addonName, addonTable }
-    }, { __index = _G }))
-
-    -- Execute with the addon name and table as varargs
+    -- Execute directly in _G (like WoW does)
     chunk(addonName, addonTable)
 
     -- Fire ADDON_LOADED event to initialize

@@ -15,10 +15,11 @@ function WoWMock.reset()
     WoWMock.frames = {}
     WoWMock.events = {}
     WoWMock.slashCommands = {}
-    TakeItOffDB = nil
-    SlashCmdList = {}
-    SLASH_TAKEITOFF1 = nil
-    SLASH_TAKEITOFF2 = nil
+    WoWMock.printOutput = {}
+    _G.TakeItOffDB = nil
+    _G.SlashCmdList = {}
+    _G.SLASH_TAKEITOFF1 = nil
+    _G.SLASH_TAKEITOFF2 = nil
 end
 
 -- Mock frame object
