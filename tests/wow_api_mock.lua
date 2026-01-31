@@ -147,15 +147,24 @@ function WoWMock.install()
         GetItemNameByID = function(itemID)
             return "Test Item " .. tostring(itemID)
         end,
-        GetItemLink = function(itemID)
-            -- Return nil if item link is not available (simulates uncached item)
-            if not WoWMock.itemLinkAvailable then
-                return nil
-            end
-            -- Return a simulated item link format
-            return "|cffffffff|Hitem:" .. tostring(itemID) .. "::::::::::::|h[Test Item " .. tostring(itemID) .. "]|h|r"
+        GetItemLink = function(itemLocation)
+            -- Note: C_Item.GetItemLink takes ItemLocation, not itemID
+            -- This is here for backwards compatibility in mocks
+            return nil
         end
     }
+
+    -- GetItemInfo - returns item name, link, and other info for an item ID
+    _G.GetItemInfo = function(itemID)
+        local itemName = "Test Item " .. tostring(itemID)
+        -- Return nil for link if item link is not available (simulates uncached item)
+        if not WoWMock.itemLinkAvailable then
+            return itemName, nil
+        end
+        -- Return a simulated item link format
+        local itemLink = "|cffffffff|Hitem:" .. tostring(itemID) .. "::::::::::::|h[" .. itemName .. "]|h|r"
+        return itemName, itemLink
+    end
 
     -- Print function (capture output)
     WoWMock.printOutput = {}
