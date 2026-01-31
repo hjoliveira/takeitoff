@@ -8,6 +8,23 @@ local defaults = {
     itemIDs = {},  -- List of item IDs to watch for
 }
 
+-- Get a clickable item link, falling back to item name if unavailable
+local function GetItemLinkOrName(itemID)
+    -- Try to get the full item link (clickable)
+    local itemLink = C_Item.GetItemLink(itemID)
+    if itemLink then
+        return itemLink
+    end
+
+    -- Fall back to item name if link isn't available
+    local itemName = C_Item.GetItemNameByID(itemID)
+    if itemName then
+        return itemName
+    end
+
+    return "Unknown Item"
+end
+
 -- Equipment slot IDs
 local EQUIPMENT_SLOTS = {
     1,  -- Head
@@ -130,8 +147,8 @@ SlashCmdList["TAKEITOFF"] = function(msg)
                 end
             end
             table.insert(TakeItOffDB.itemIDs, itemID)
-            local itemName = C_Item.GetItemNameByID(itemID) or "Unknown"
-            print("|cffff0000TakeItOff:|r Added item: " .. itemName .. " (ID: " .. itemID .. ")")
+            local itemLink = GetItemLinkOrName(itemID)
+            print("|cffff0000TakeItOff:|r Added item: " .. itemLink)
             CheckEquippedItems()
         else
             print("|cffff0000TakeItOff:|r Invalid item ID. Usage: /tio add <itemID>")
@@ -143,8 +160,8 @@ SlashCmdList["TAKEITOFF"] = function(msg)
             for i, id in ipairs(TakeItOffDB.itemIDs) do
                 if id == itemID then
                     table.remove(TakeItOffDB.itemIDs, i)
-                    local itemName = C_Item.GetItemNameByID(itemID) or "Unknown"
-                    print("|cffff0000TakeItOff:|r Removed item: " .. itemName .. " (ID: " .. itemID .. ")")
+                    local itemLink = GetItemLinkOrName(itemID)
+                    print("|cffff0000TakeItOff:|r Removed item: " .. itemLink)
                     CheckEquippedItems()
                     return
                 end
@@ -160,8 +177,8 @@ SlashCmdList["TAKEITOFF"] = function(msg)
         else
             print("|cffff0000TakeItOff:|r Watched items:")
             for _, itemID in ipairs(TakeItOffDB.itemIDs) do
-                local itemName = C_Item.GetItemNameByID(itemID) or "Unknown"
-                print("  - " .. itemName .. " (ID: " .. itemID .. ")")
+                local itemLink = GetItemLinkOrName(itemID)
+                print("  - " .. itemLink)
             end
         end
 
@@ -186,8 +203,8 @@ SlashCmdList["TAKEITOFF"] = function(msg)
         for _, slotID in ipairs(EQUIPMENT_SLOTS) do
             local itemID = GetInventoryItemID("player", slotID)
             if itemID then
-                local itemName = C_Item.GetItemNameByID(itemID) or "Unknown"
-                print("  Slot " .. slotID .. ": " .. itemName .. " (ID: " .. itemID .. ")")
+                local itemLink = GetItemLinkOrName(itemID)
+                print("  Slot " .. slotID .. ": " .. itemLink)
             end
         end
         print("|cffff0000TakeItOff:|r Debug - Watched items:")

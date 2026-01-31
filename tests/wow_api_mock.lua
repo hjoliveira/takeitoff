@@ -144,6 +144,10 @@ function WoWMock.install()
     _G.C_Item = {
         GetItemNameByID = function(itemID)
             return "Test Item " .. tostring(itemID)
+        end,
+        GetItemLink = function(itemID)
+            -- Return a simulated item link format
+            return "|cffffffff|Hitem:" .. tostring(itemID) .. "::::::::::::|h[Test Item " .. tostring(itemID) .. "]|h|r"
         end
     }
 
