@@ -55,3 +55,39 @@ Alternatively, you can use the `/dump` command in-game while hovering over an it
 - Alert when wearing outdated equipment
 - Warn about items that should only be used in specific situations
 - Prevent accidentally wearing cosmetic items in raids
+
+## Running Tests
+
+The addon includes unit tests using [busted](https://olivinelabs.com/busted/), a Lua testing framework.
+
+### Prerequisites
+
+1. Install Lua 5.1 or LuaJIT
+2. Install LuaRocks (Lua package manager)
+3. Install busted:
+   ```bash
+   luarocks install busted
+   ```
+
+### Running the Tests
+
+From the repository root directory:
+
+```bash
+busted tests/TakeItOff_spec.lua
+```
+
+Or run all tests:
+
+```bash
+busted
+```
+
+### Test Coverage
+
+The tests cover:
+- Addon initialization and database setup
+- Slash commands (add, remove, list, clear, test)
+- Equipment detection across all slots
+- Warning frame display and styling
+- Event handling (ADDON_LOADED, PLAYER_ENTERING_WORLD, PLAYER_EQUIPMENT_CHANGED)
