@@ -650,4 +650,184 @@ describe("TakeItOff Addon", function()
 
     end)
 
+    describe("Custom warning text", function()
+
+        it("should initialize with default warning text", function()
+            loadAddon()
+            assert.is_not_nil(TakeItOffDB.warningText)
+            assert.are.equal("TAKE IT OFF", TakeItOffDB.warningText)
+        end)
+
+        it("should display default warning text on frame", function()
+            loadAddon()
+            local frame = WoWMock.getWarningFrame()
+            local fontString = frame._children[1]
+            assert.are.equal("TAKE IT OFF", fontString:GetText())
+        end)
+
+        it("should expose SetWarningText function", function()
+            loadAddon()
+            assert.is_not_nil(TakeItOffAddon.SetWarningText)
+            assert.are.equal("function", type(TakeItOffAddon.SetWarningText))
+        end)
+
+        it("should expose GetWarningText function", function()
+            loadAddon()
+            assert.is_not_nil(TakeItOffAddon.GetWarningText)
+            assert.are.equal("function", type(TakeItOffAddon.GetWarningText))
+        end)
+
+        it("should expose GetDefaultWarningText function", function()
+            loadAddon()
+            assert.is_not_nil(TakeItOffAddon.GetDefaultWarningText)
+            assert.are.equal("function", type(TakeItOffAddon.GetDefaultWarningText))
+        end)
+
+        it("should return default text from GetDefaultWarningText", function()
+            loadAddon()
+            assert.are.equal("TAKE IT OFF", TakeItOffAddon.GetDefaultWarningText())
+        end)
+
+        it("should set custom warning text via SetWarningText", function()
+            loadAddon()
+            TakeItOffAddon.SetWarningText("REMOVE NOW!")
+            assert.are.equal("REMOVE NOW!", TakeItOffDB.warningText)
+        end)
+
+        it("should update frame text when SetWarningText is called", function()
+            loadAddon()
+            local frame = WoWMock.getWarningFrame()
+            local fontString = frame._children[1]
+            TakeItOffAddon.SetWarningText("CUSTOM TEXT")
+            assert.are.equal("CUSTOM TEXT", fontString:GetText())
+        end)
+
+        it("should return custom text from GetWarningText", function()
+            loadAddon()
+            TakeItOffAddon.SetWarningText("MY TEXT")
+            assert.are.equal("MY TEXT", TakeItOffAddon.GetWarningText())
+        end)
+
+        it("should reset to default when empty string is passed", function()
+            loadAddon()
+            TakeItOffAddon.SetWarningText("CUSTOM")
+            TakeItOffAddon.SetWarningText("")
+            assert.are.equal("TAKE IT OFF", TakeItOffDB.warningText)
+        end)
+
+        it("should reset to default when nil is passed", function()
+            loadAddon()
+            TakeItOffAddon.SetWarningText("CUSTOM")
+            TakeItOffAddon.SetWarningText(nil)
+            assert.are.equal("TAKE IT OFF", TakeItOffDB.warningText)
+        end)
+
+        it("should set warning text via slash command", function()
+            loadAddon()
+            WoWMock.runSlashCommand("text DANGER!")
+            assert.are.equal("DANGER!", TakeItOffDB.warningText)
+        end)
+
+        it("should print confirmation when setting text via slash command", function()
+            loadAddon()
+            WoWMock.clearPrintOutput()
+            WoWMock.runSlashCommand("text NEW TEXT")
+            local foundMessage = false
+            for _, msg in ipairs(WoWMock.printOutput) do
+                if msg:find("Warning text set to") and msg:find("NEW TEXT") then
+                    foundMessage = true
+                    break
+                end
+            end
+            assert.is_true(foundMessage)
+        end)
+
+        it("should show current text when text command has no argument", function()
+            loadAddon()
+            TakeItOffAddon.SetWarningText("CURRENT TEXT")
+            WoWMock.clearPrintOutput()
+            WoWMock.runSlashCommand("text")
+            local foundCurrent = false
+            for _, msg in ipairs(WoWMock.printOutput) do
+                if msg:find("Current warning text") and msg:find("CURRENT TEXT") then
+                    foundCurrent = true
+                    break
+                end
+            end
+            assert.is_true(foundCurrent)
+        end)
+
+        it("should reset text via resettext slash command", function()
+            loadAddon()
+            TakeItOffAddon.SetWarningText("CUSTOM")
+            WoWMock.runSlashCommand("resettext")
+            assert.are.equal("TAKE IT OFF", TakeItOffDB.warningText)
+        end)
+
+        it("should print confirmation when resetting text", function()
+            loadAddon()
+            TakeItOffAddon.SetWarningText("CUSTOM")
+            WoWMock.clearPrintOutput()
+            WoWMock.runSlashCommand("resettext")
+            local foundMessage = false
+            for _, msg in ipairs(WoWMock.printOutput) do
+                if msg:find("reset to default") and msg:find("TAKE IT OFF") then
+                    foundMessage = true
+                    break
+                end
+            end
+            assert.is_true(foundMessage)
+        end)
+
+        it("should show text command in help output", function()
+            loadAddon()
+            WoWMock.clearPrintOutput()
+            WoWMock.runSlashCommand("help")
+            local foundText = false
+            local foundResetText = false
+            for _, msg in ipairs(WoWMock.printOutput) do
+                if msg:find("/tio text") then
+                    foundText = true
+                end
+                if msg:find("/tio resettext") then
+                    foundResetText = true
+                end
+            end
+            assert.is_true(foundText)
+            assert.is_true(foundResetText)
+        end)
+
+        it("should persist custom text between checks", function()
+            loadAddon()
+            TakeItOffAddon.SetWarningText("PERSISTENT")
+
+            -- Add item and equip it
+            WoWMock.runSlashCommand("add 12345")
+            WoWMock.equipItem(15, 12345)
+            WoWMock.fireEvent("PLAYER_EQUIPMENT_CHANGED", 15, false)
+
+            local frame = WoWMock.getWarningFrame()
+            local fontString = frame._children[1]
+            -- Text should still be custom after equipment check
+            assert.are.equal("PERSISTENT", fontString:GetText())
+        end)
+
+    end)
+
+    describe("Warning text settings UI", function()
+
+        it("should create warning text input frame", function()
+            loadAddonWithSettings()
+            local inputFrame = WoWMock.frames["TakeItOffWarningTextFrame"]
+            assert.is_not_nil(inputFrame)
+        end)
+
+        it("should create warning text EditBox", function()
+            loadAddonWithSettings()
+            local editBox = WoWMock.frames["TakeItOffWarningTextInput"]
+            assert.is_not_nil(editBox)
+        end)
+
+    end)
+
 end)

@@ -207,7 +207,32 @@ local function createMockFrame(frameType, name, parent, template)
     end
 
     function frame:GetText()
-        return self._text
+        return self._text or ""
+    end
+
+    -- EditBox specific methods
+    function frame:SetFontObject(fontObject)
+        self._fontObject = fontObject
+    end
+
+    function frame:SetAutoFocus(autoFocus)
+        self._autoFocus = autoFocus
+    end
+
+    function frame:SetMaxLetters(maxLetters)
+        self._maxLetters = maxLetters
+    end
+
+    function frame:ClearFocus()
+        self._hasFocus = false
+    end
+
+    function frame:SetFocus()
+        self._hasFocus = true
+    end
+
+    function frame:HasFocus()
+        return self._hasFocus or false
     end
 
     if name then
@@ -327,6 +352,12 @@ function WoWMock.install()
     _G.InterfaceOptionsFrame_OpenToCategory = function(panel)
         -- Mock implementation
     end
+
+    -- Font objects for EditBox
+    _G.GameFontHighlight = {}
+    _G.GameFontNormal = {}
+    _G.GameFontNormalLarge = {}
+    _G.GameFontHighlightSmall = {}
 end
 
 -- Helper to equip an item in a slot
