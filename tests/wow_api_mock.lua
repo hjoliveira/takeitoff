@@ -60,6 +60,10 @@ local function createMockFrame(frameType, name, parent, template)
         table.insert(self._points, {...})
     end
 
+    function frame:SetAllPoints(relativeTo)
+        -- Mock implementation - sets all points to match parent or specified frame
+    end
+
     function frame:SetFrameStrata(strata)
         self._strata = strata
     end
