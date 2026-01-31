@@ -11,10 +11,10 @@ A World of Warcraft addon for version 12.0 (Midnight) that alerts you when speci
 
 ## Installation
 
-1. Download or clone this repository
-2. Copy the `TakeItOff` folder to your WoW addons directory:
+1. Download the latest `TakeItOff.zip` from the [Releases page](https://github.com/hjoliveira/takeitoff/releases)
+2. Extract the zip file to your WoW addons directory:
    ```
-   World of Warcraft/_retail_/Interface/AddOns/TakeItOff/
+   World of Warcraft/_retail_/Interface/AddOns/
    ```
 3. Restart WoW or reload your UI (`/reload`)
 
