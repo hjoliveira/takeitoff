@@ -2,7 +2,8 @@
 ## Title: Take It Off
 ## Notes: Alerts you when specific items are equipped
 ## Author: hjoliveira
-## Version: 1.0.0
+## Version: 1.1.0
 ## SavedVariables: TakeItOffDB
 
 TakeItOff.lua
+Settings.lua

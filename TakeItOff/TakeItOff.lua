@@ -3,12 +3,16 @@
 
 local addonName, addon = ...
 
+-- Expose addon namespace globally for settings panel
+TakeItOffAddon = addon
+
 -- Default database
 local defaults = {
     itemIDs = {},  -- List of item IDs to watch for
 }
 
 -- Get a clickable item link, falling back to item name if unavailable
+-- Exposed via addon namespace for settings panel
 local function GetItemLinkOrName(itemID)
     -- Try to get the full item link (clickable) using GetItemInfo
     -- GetItemInfo returns: itemName, itemLink, itemQuality, ...
@@ -128,6 +132,10 @@ eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 eventFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 
+-- Expose functions for settings panel
+addon.GetItemLinkOrName = GetItemLinkOrName
+addon.CheckEquippedItems = CheckEquippedItems
+
 -- Slash commands
 SLASH_TAKEITOFF1 = "/takeitoff"
 SLASH_TAKEITOFF2 = "/tio"
@@ -212,12 +220,21 @@ SlashCmdList["TAKEITOFF"] = function(msg)
             print("  [" .. i .. "] ID: " .. watchedID .. " (type: " .. type(watchedID) .. ")")
         end
 
+    elseif command == "settings" or command == "options" or command == "config" then
+        -- Open the settings panel
+        if addon.OpenSettings then
+            addon.OpenSettings()
+        else
+            print("|cffff0000TakeItOff:|r Settings panel not available.")
+        end
+
     else
         print("|cffff0000TakeItOff|r Commands:")
         print("  /tio add <itemID> - Add an item to watch")
         print("  /tio remove <itemID> - Remove an item from watch")
         print("  /tio list - Show all watched items")
         print("  /tio clear - Clear all watched items")
+        print("  /tio settings - Open settings panel")
         print("  /tio test - Toggle test warning display")
         print("  /tio help - Show this help message")
     end

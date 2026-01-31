@@ -3,7 +3,7 @@
 
 local WoWMock = require("tests.wow_api_mock")
 
--- Helper to load the addon
+-- Helper to load the addon (main file only)
 local function loadAddon()
     -- Set up the addon loading environment
     local addonName = "TakeItOff"
@@ -19,6 +19,31 @@ local function loadAddon()
     chunk(addonName, addonTable)
 
     -- Fire ADDON_LOADED event to initialize
+    WoWMock.fireEvent("ADDON_LOADED", addonName)
+
+    return addonTable
+end
+
+-- Helper to load the addon with settings
+local function loadAddonWithSettings()
+    local addonName = "TakeItOff"
+    local addonTable = {}
+
+    -- Load the main addon file
+    local mainChunk, mainErr = loadfile("TakeItOff/TakeItOff.lua")
+    if not mainChunk then
+        error("Failed to load main addon: " .. tostring(mainErr))
+    end
+    mainChunk(addonName, addonTable)
+
+    -- Load the settings file
+    local settingsChunk, settingsErr = loadfile("TakeItOff/Settings.lua")
+    if not settingsChunk then
+        error("Failed to load settings: " .. tostring(settingsErr))
+    end
+    settingsChunk(addonName, addonTable)
+
+    -- Fire ADDON_LOADED event to initialize both
     WoWMock.fireEvent("ADDON_LOADED", addonName)
 
     return addonTable
@@ -422,6 +447,205 @@ describe("TakeItOff Addon", function()
                 end
             end
             assert.is_true(foundBrackets)
+        end)
+
+    end)
+
+    describe("Addon namespace", function()
+
+        it("should expose addon table globally", function()
+            loadAddon()
+            assert.is_not_nil(TakeItOffAddon)
+        end)
+
+        it("should expose GetItemLinkOrName function", function()
+            loadAddon()
+            assert.is_not_nil(TakeItOffAddon.GetItemLinkOrName)
+            assert.are.equal("function", type(TakeItOffAddon.GetItemLinkOrName))
+        end)
+
+        it("should expose CheckEquippedItems function", function()
+            loadAddon()
+            assert.is_not_nil(TakeItOffAddon.CheckEquippedItems)
+            assert.are.equal("function", type(TakeItOffAddon.CheckEquippedItems))
+        end)
+
+    end)
+
+    describe("Settings slash command", function()
+
+        it("should respond to settings command", function()
+            local addonTable = loadAddonWithSettings()
+            WoWMock.clearPrintOutput()
+            WoWMock.runSlashCommand("settings")
+            -- Should either open settings or print a message (no error)
+            -- Since we don't have a full UI, just verify no crash occurred
+            assert.is_true(true)
+        end)
+
+        it("should respond to options command", function()
+            local addonTable = loadAddonWithSettings()
+            WoWMock.clearPrintOutput()
+            WoWMock.runSlashCommand("options")
+            assert.is_true(true)
+        end)
+
+        it("should respond to config command", function()
+            local addonTable = loadAddonWithSettings()
+            WoWMock.clearPrintOutput()
+            WoWMock.runSlashCommand("config")
+            assert.is_true(true)
+        end)
+
+        it("should show settings in help output", function()
+            loadAddon()
+            WoWMock.clearPrintOutput()
+            WoWMock.runSlashCommand("help")
+            local foundSettings = false
+            for _, msg in ipairs(WoWMock.printOutput) do
+                if msg:find("settings") then
+                    foundSettings = true
+                    break
+                end
+            end
+            assert.is_true(foundSettings)
+        end)
+
+    end)
+
+    describe("Settings panel", function()
+
+        it("should create settings panel on load", function()
+            loadAddonWithSettings()
+            local panel = WoWMock.getSettingsPanel()
+            assert.is_not_nil(panel)
+        end)
+
+        it("should register with Blizzard settings API", function()
+            loadAddonWithSettings()
+            local categories = WoWMock.getSettingsCategories()
+            assert.is_true(#categories > 0)
+        end)
+
+        it("should expose OpenSettings function", function()
+            local addonTable = loadAddonWithSettings()
+            assert.is_not_nil(addonTable.OpenSettings)
+            assert.are.equal("function", type(addonTable.OpenSettings))
+        end)
+
+        it("should expose AddItemToWatchList function", function()
+            local addonTable = loadAddonWithSettings()
+            assert.is_not_nil(addonTable.AddItemToWatchList)
+            assert.are.equal("function", type(addonTable.AddItemToWatchList))
+        end)
+
+        it("should expose RemoveItemFromWatchList function", function()
+            local addonTable = loadAddonWithSettings()
+            assert.is_not_nil(addonTable.RemoveItemFromWatchList)
+            assert.are.equal("function", type(addonTable.RemoveItemFromWatchList))
+        end)
+
+    end)
+
+    describe("Settings watch list management", function()
+
+        it("should add item via AddItemToWatchList", function()
+            local addonTable = loadAddonWithSettings()
+            local result = addonTable.AddItemToWatchList(12345)
+            assert.is_true(result)
+            assert.are.equal(1, #TakeItOffDB.itemIDs)
+            assert.are.equal(12345, TakeItOffDB.itemIDs[1])
+        end)
+
+        it("should not add duplicate items via AddItemToWatchList", function()
+            local addonTable = loadAddonWithSettings()
+            addonTable.AddItemToWatchList(12345)
+            local result = addonTable.AddItemToWatchList(12345)
+            assert.is_false(result)
+            assert.are.equal(1, #TakeItOffDB.itemIDs)
+        end)
+
+        it("should remove item via RemoveItemFromWatchList", function()
+            local addonTable = loadAddonWithSettings()
+            addonTable.AddItemToWatchList(12345)
+            local result = addonTable.RemoveItemFromWatchList(12345)
+            assert.is_true(result)
+            assert.are.equal(0, #TakeItOffDB.itemIDs)
+        end)
+
+        it("should return false when removing non-existent item", function()
+            local addonTable = loadAddonWithSettings()
+            local result = addonTable.RemoveItemFromWatchList(99999)
+            assert.is_false(result)
+        end)
+
+        it("should print message when adding item", function()
+            local addonTable = loadAddonWithSettings()
+            WoWMock.clearPrintOutput()
+            addonTable.AddItemToWatchList(12345)
+            local foundMessage = false
+            for _, msg in ipairs(WoWMock.printOutput) do
+                if msg:find("Added item") then
+                    foundMessage = true
+                    break
+                end
+            end
+            assert.is_true(foundMessage)
+        end)
+
+        it("should print message when removing item", function()
+            local addonTable = loadAddonWithSettings()
+            addonTable.AddItemToWatchList(12345)
+            WoWMock.clearPrintOutput()
+            addonTable.RemoveItemFromWatchList(12345)
+            local foundMessage = false
+            for _, msg in ipairs(WoWMock.printOutput) do
+                if msg:find("Removed item") then
+                    foundMessage = true
+                    break
+                end
+            end
+            assert.is_true(foundMessage)
+        end)
+
+        it("should trigger equipment check when adding item", function()
+            local addonTable = loadAddonWithSettings()
+            local frame = WoWMock.getWarningFrame()
+
+            -- Equip an item first
+            WoWMock.equipItem(15, 12345)
+
+            -- Add to watch list via settings API
+            addonTable.AddItemToWatchList(12345)
+
+            -- Warning should be shown
+            assert.is_true(frame:IsShown())
+        end)
+
+        it("should trigger equipment check when removing item", function()
+            local addonTable = loadAddonWithSettings()
+            local frame = WoWMock.getWarningFrame()
+
+            -- Add and equip item
+            WoWMock.equipItem(15, 12345)
+            addonTable.AddItemToWatchList(12345)
+            assert.is_true(frame:IsShown())
+
+            -- Remove from watch list
+            addonTable.RemoveItemFromWatchList(12345)
+
+            -- Warning should be hidden
+            assert.is_false(frame:IsShown())
+        end)
+
+    end)
+
+    describe("Drop zone", function()
+
+        it("should create drop zone frame", function()
+            loadAddonWithSettings()
+            local dropZone = WoWMock.frames["TakeItOffDropZone"]
+            assert.is_not_nil(dropZone)
         end)
 
     end)
