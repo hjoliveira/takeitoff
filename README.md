@@ -58,7 +58,7 @@ Alternatively, you can use the `/dump` command in-game while hovering over an it
 
 ## Running Tests
 
-The addon includes unit tests using [busted](https://olivinelabs.com/busted/), a Lua testing framework.
+The addon includes unit tests using [busted](https://github.com/lunarmodules/busted), a Lua testing framework.
 
 ### Prerequisites
 
