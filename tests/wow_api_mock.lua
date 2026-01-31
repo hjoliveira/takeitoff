@@ -9,6 +9,7 @@ WoWMock.frames = {}
 WoWMock.events = {}
 WoWMock.slashCommands = {}
 WoWMock.itemLinkAvailable = true  -- Controls whether GetItemLink returns a link or nil
+WoWMock.itemInfoAvailable = true  -- Controls whether GetItemInfo returns any data at all
 
 -- Reset all mock state
 function WoWMock.reset()
@@ -18,6 +19,7 @@ function WoWMock.reset()
     WoWMock.slashCommands = {}
     WoWMock.printOutput = {}
     WoWMock.itemLinkAvailable = true
+    WoWMock.itemInfoAvailable = true
     _G.TakeItOffDB = nil
     _G.SlashCmdList = {}
     _G.SLASH_TAKEITOFF1 = nil
@@ -156,8 +158,12 @@ function WoWMock.install()
 
     -- GetItemInfo - returns item name, link, and other info for an item ID
     _G.GetItemInfo = function(itemID)
+        -- Return nil for both if item info is not available (simulates completely uncached item)
+        if not WoWMock.itemInfoAvailable then
+            return nil, nil
+        end
         local itemName = "Test Item " .. tostring(itemID)
-        -- Return nil for link if item link is not available (simulates uncached item)
+        -- Return nil for link if item link is not available (simulates partially cached item)
         if not WoWMock.itemLinkAvailable then
             return itemName, nil
         end
@@ -221,6 +227,11 @@ end
 -- Helper to set whether item links are available (simulates cached/uncached items)
 function WoWMock.setItemLinkAvailable(available)
     WoWMock.itemLinkAvailable = available
+end
+
+-- Helper to set whether item info is available at all (simulates completely uncached items)
+function WoWMock.setItemInfoAvailable(available)
+    WoWMock.itemInfoAvailable = available
 end
 
 return WoWMock
