@@ -180,6 +180,21 @@ SlashCmdList["TAKEITOFF"] = function(msg)
             print("|cffff0000TakeItOff:|r Test warning shown.")
         end
 
+    elseif command == "debug" then
+        -- Show equipped items for debugging
+        print("|cffff0000TakeItOff:|r Debug - Equipped items:")
+        for _, slotID in ipairs(EQUIPMENT_SLOTS) do
+            local itemID = GetInventoryItemID("player", slotID)
+            if itemID then
+                local itemName = C_Item.GetItemNameByID(itemID) or "Unknown"
+                print("  Slot " .. slotID .. ": " .. itemName .. " (ID: " .. itemID .. ")")
+            end
+        end
+        print("|cffff0000TakeItOff:|r Debug - Watched items:")
+        for i, watchedID in ipairs(TakeItOffDB.itemIDs) do
+            print("  [" .. i .. "] ID: " .. watchedID .. " (type: " .. type(watchedID) .. ")")
+        end
+
     else
         print("|cffff0000TakeItOff|r Commands:")
         print("  /tio add <itemID> - Add an item to watch")
