@@ -55,7 +55,3 @@ Alternatively, you can use the `/dump` command in-game while hovering over an it
 - Alert when wearing outdated equipment
 - Warn about items that should only be used in specific situations
 - Prevent accidentally wearing cosmetic items in raids
-
-## License
-
-MIT License - Feel free to modify and distribute.
