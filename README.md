@@ -29,14 +29,13 @@ A World of Warcraft addon for version 12.0 (Midnight) that alerts you when speci
 | `/tio remove <itemID>` | Remove an item ID from the watch list |
 | `/tio list` | Show all watched items |
 | `/tio clear` | Clear all watched items |
-| `/tio test` | Toggle the warning display for testing |
-| `/tio settings` | Open the settings panel |
+| `/tio options` | Open the settings panel |
 | `/tio text <message>` | Set a custom warning message |
 | `/tio resettext` | Reset warning text to default |
-| `/tio debug` | Show equipped items and watch list (for troubleshooting) |
+| `/tio debug` | Show debug info and toggle test warning |
 | `/tio help` | Show help message |
 
-You can also use `/takeitoff` instead of `/tio`, and `/tio options` instead of `/tio settings`.
+You can also use `/takeitoff` instead of `/tio`.
 
 ## Usage Examples
 
@@ -46,10 +45,10 @@ You can also use `/takeitoff` instead of `/tio`, and `/tio options` instead of `
 /tio list                -- View all watched items
 /tio remove 19019        -- Remove Thunderfury from the list
 /tio clear               -- Remove all items from the list
-/tio test                -- Test the warning display
-/tio settings            -- Open the settings panel
+/tio options             -- Open the settings panel
 /tio text "REMOVE GEAR"  -- Set custom warning text
 /tio resettext           -- Reset to default "TAKE IT OFF"
+/tio debug               -- Show debug info and toggle test warning
 ```
 
 ## Finding Item IDs
@@ -68,7 +67,7 @@ Alternatively, you can use the `/dump` command in-game while hovering over an it
 
 ## Settings Panel
 
-Access the settings panel via `/tio settings` or through the WoW AddOns menu (ESC → Options → AddOns → TakeItOff).
+Access the settings panel via `/tio options` or through the WoW AddOns menu (ESC → Options → AddOns → TakeItOff).
 
 The settings panel provides:
 - **Custom Warning Text**: Enter a custom message (up to 50 characters) to display instead of the default "TAKE IT OFF"
@@ -113,7 +112,3 @@ The tests cover:
 - Warning frame display and styling
 - Event handling (ADDON_LOADED, PLAYER_ENTERING_WORLD, PLAYER_EQUIPMENT_CHANGED)
 - Settings panel functionality
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

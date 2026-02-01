@@ -207,18 +207,48 @@ describe("TakeItOff Addon", function()
 
     end)
 
-    describe("Test command", function()
+    describe("Debug command", function()
 
         it("should toggle warning frame visibility", function()
             loadAddon()
             local frame = WoWMock.getWarningFrame()
             assert.is_false(frame:IsShown())
 
-            WoWMock.runSlashCommand("test")
+            WoWMock.runSlashCommand("debug")
             assert.is_true(frame:IsShown())
 
-            WoWMock.runSlashCommand("test")
+            WoWMock.runSlashCommand("debug")
             assert.is_false(frame:IsShown())
+        end)
+
+        it("should show equipped items info", function()
+            loadAddon()
+            WoWMock.equipItem(15, 19019)
+            WoWMock.clearPrintOutput()
+            WoWMock.runSlashCommand("debug")
+            local foundEquipped = false
+            for _, msg in ipairs(WoWMock.printOutput) do
+                if msg:find("Equipped items") then
+                    foundEquipped = true
+                    break
+                end
+            end
+            assert.is_true(foundEquipped)
+        end)
+
+        it("should show watched items info", function()
+            loadAddon()
+            WoWMock.runSlashCommand("add 12345")
+            WoWMock.clearPrintOutput()
+            WoWMock.runSlashCommand("debug")
+            local foundWatched = false
+            for _, msg in ipairs(WoWMock.printOutput) do
+                if msg:find("Watched items") then
+                    foundWatched = true
+                    break
+                end
+            end
+            assert.is_true(foundWatched)
         end)
 
     end)
@@ -472,43 +502,29 @@ describe("TakeItOff Addon", function()
 
     end)
 
-    describe("Settings slash command", function()
-
-        it("should respond to settings command", function()
-            local addonTable = loadAddonWithSettings()
-            WoWMock.clearPrintOutput()
-            WoWMock.runSlashCommand("settings")
-            -- Should either open settings or print a message (no error)
-            -- Since we don't have a full UI, just verify no crash occurred
-            assert.is_true(true)
-        end)
+    describe("Options slash command", function()
 
         it("should respond to options command", function()
             local addonTable = loadAddonWithSettings()
             WoWMock.clearPrintOutput()
             WoWMock.runSlashCommand("options")
+            -- Should either open settings or print a message (no error)
+            -- Since we don't have a full UI, just verify no crash occurred
             assert.is_true(true)
         end)
 
-        it("should respond to config command", function()
-            local addonTable = loadAddonWithSettings()
-            WoWMock.clearPrintOutput()
-            WoWMock.runSlashCommand("config")
-            assert.is_true(true)
-        end)
-
-        it("should show settings in help output", function()
+        it("should show options in help output", function()
             loadAddon()
             WoWMock.clearPrintOutput()
             WoWMock.runSlashCommand("help")
-            local foundSettings = false
+            local foundOptions = false
             for _, msg in ipairs(WoWMock.printOutput) do
-                if msg:find("settings") then
-                    foundSettings = true
+                if msg:find("options") then
+                    foundOptions = true
                     break
                 end
             end
-            assert.is_true(foundSettings)
+            assert.is_true(foundOptions)
         end)
 
     end)

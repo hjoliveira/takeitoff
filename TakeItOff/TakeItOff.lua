@@ -224,18 +224,8 @@ SlashCmdList["TAKEITOFF"] = function(msg)
         print("|cffff0000TakeItOff:|r Cleared all items from the watch list.")
         CheckEquippedItems()
 
-    elseif command == "test" then
-        -- Toggle the warning display for testing
-        if warningFrame:IsShown() then
-            warningFrame:Hide()
-            print("|cffff0000TakeItOff:|r Test warning hidden.")
-        else
-            warningFrame:Show()
-            print("|cffff0000TakeItOff:|r Test warning shown.")
-        end
-
     elseif command == "debug" then
-        -- Show equipped items for debugging
+        -- Show equipped items for debugging and toggle warning display
         print("|cffff0000TakeItOff:|r Debug - Equipped items:")
         for _, slotID in ipairs(EQUIPMENT_SLOTS) do
             local itemID = GetInventoryItemID("player", slotID)
@@ -248,8 +238,16 @@ SlashCmdList["TAKEITOFF"] = function(msg)
         for i, watchedID in ipairs(TakeItOffDB.itemIDs) do
             print("  [" .. i .. "] ID: " .. watchedID .. " (type: " .. type(watchedID) .. ")")
         end
+        -- Toggle the warning display for testing
+        if warningFrame:IsShown() then
+            warningFrame:Hide()
+            print("|cffff0000TakeItOff:|r Test warning hidden.")
+        else
+            warningFrame:Show()
+            print("|cffff0000TakeItOff:|r Test warning shown.")
+        end
 
-    elseif command == "settings" or command == "options" or command == "config" then
+    elseif command == "options" then
         -- Open the settings panel
         if addon.OpenSettings then
             addon.OpenSettings()
@@ -278,10 +276,10 @@ SlashCmdList["TAKEITOFF"] = function(msg)
         print("  /tio remove <itemID> - Remove an item from watch")
         print("  /tio list - Show all watched items")
         print("  /tio clear - Clear all watched items")
-        print("  /tio settings - Open settings panel")
+        print("  /tio options - Open settings panel")
         print("  /tio text <text> - Set custom warning text")
         print("  /tio resettext - Reset warning text to default")
-        print("  /tio test - Toggle test warning display")
+        print("  /tio debug - Show debug info and toggle test warning")
         print("  /tio help - Show this help message")
     end
 end
