@@ -4,8 +4,11 @@ A World of Warcraft addon for version 12.0 (Midnight) that alerts you when speci
 
 ## Features
 
-- **Visual Alert**: Displays "TAKE IT OFF" in large red capital letters centered on your screen when any watched item is equipped
+- **Visual Alert**: Displays a customizable warning message (default: "TAKE IT OFF") in large red capital letters centered on your screen when any watched item is equipped
 - **Configurable Item List**: Add or remove item IDs to customize which items trigger the alert
+- **Settings Panel**: In-game GUI to manage your watch list with drag-and-drop support
+- **Custom Warning Text**: Change the warning message to your preference
+- **Clickable Item Links**: Item names in chat messages are clickable for easy identification
 - **Persistent Storage**: Your configuration is saved between sessions using SavedVariables
 - **Automatic Detection**: Checks your equipment on login, UI reload, and whenever you change gear
 
@@ -27,19 +30,26 @@ A World of Warcraft addon for version 12.0 (Midnight) that alerts you when speci
 | `/tio list` | Show all watched items |
 | `/tio clear` | Clear all watched items |
 | `/tio test` | Toggle the warning display for testing |
+| `/tio settings` | Open the settings panel |
+| `/tio text <message>` | Set a custom warning message |
+| `/tio resettext` | Reset warning text to default |
+| `/tio debug` | Show equipped items and watch list (for troubleshooting) |
 | `/tio help` | Show help message |
 
-You can also use `/takeitoff` instead of `/tio`.
+You can also use `/takeitoff` instead of `/tio`, and `/tio options` instead of `/tio settings`.
 
 ## Usage Examples
 
 ```
-/tio add 19019       -- Add Thunderfury to the watch list
-/tio add 32837       -- Add Warglaive of Azzinoth
-/tio list            -- View all watched items
-/tio remove 19019    -- Remove Thunderfury from the list
-/tio clear           -- Remove all items from the list
-/tio test            -- Test the warning display
+/tio add 19019           -- Add Thunderfury to the watch list
+/tio add 32837           -- Add Warglaive of Azzinoth
+/tio list                -- View all watched items
+/tio remove 19019        -- Remove Thunderfury from the list
+/tio clear               -- Remove all items from the list
+/tio test                -- Test the warning display
+/tio settings            -- Open the settings panel
+/tio text "REMOVE GEAR"  -- Set custom warning text
+/tio resettext           -- Reset to default "TAKE IT OFF"
 ```
 
 ## Finding Item IDs
@@ -55,6 +65,17 @@ Alternatively, you can use the `/dump` command in-game while hovering over an it
 - Alert when wearing outdated equipment
 - Warn about items that should only be used in specific situations
 - Prevent accidentally wearing cosmetic items in raids
+
+## Settings Panel
+
+Access the settings panel via `/tio settings` or through the WoW AddOns menu (ESC → Options → AddOns → TakeItOff).
+
+The settings panel provides:
+- **Custom Warning Text**: Enter a custom message (up to 50 characters) to display instead of the default "TAKE IT OFF"
+- **Drag-and-Drop**: Drag items directly from your inventory to add them to the watch list
+- **Visual Item List**: See all watched items with icons and clickable item links
+- **Remove Buttons**: Easily remove individual items from the list
+- **Clear All**: Remove all items at once
 
 ## Running Tests
 
@@ -87,7 +108,12 @@ busted
 
 The tests cover:
 - Addon initialization and database setup
-- Slash commands (add, remove, list, clear, test)
-- Equipment detection across all slots
+- Slash commands (add, remove, list, clear, test, text, resettext, debug)
+- Equipment detection across all 18 equipment slots
 - Warning frame display and styling
 - Event handling (ADDON_LOADED, PLAYER_ENTERING_WORLD, PLAYER_EQUIPMENT_CHANGED)
+- Settings panel functionality
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
