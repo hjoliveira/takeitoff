@@ -15,16 +15,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Lua
-        uses: leafo/gh-actions-lua@v10
-        with:
-          luaVersion: "5.1"
-
-      - name: Setup LuaRocks
-        uses: leafo/gh-actions-luarocks@v4
-
-      - name: Install dependencies
-        run: luarocks install busted
+      - name: Install Lua 5.1 and busted
+        run: sudo apt-get update && sudo apt-get install -y lua5.1 lua-busted
 
       - name: Run tests
         run: busted tests/TakeItOff_spec.lua
