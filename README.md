@@ -1,6 +1,6 @@
 # TakeItOff
 
-A World of Warcraft addon for version 12.0 (Midnight) that alerts you when specific items are equipped.
+A World of Warcraft addon for version 12.1 (Midnight) that alerts you when specific items are equipped.
 
 ## Features
 
@@ -82,12 +82,11 @@ The addon includes unit tests using [busted](https://github.com/lunarmodules/bus
 
 ### Prerequisites
 
-1. Install Lua 5.1 or LuaJIT
-2. Install LuaRocks (Lua package manager)
-3. Install busted:
-   ```bash
-   luarocks install busted
-   ```
+Install Lua 5.1 and busted (Debian/Ubuntu):
+
+```bash
+sudo apt-get update && sudo apt-get install -y lua5.1 lua-busted
+```
 
 ### Running the Tests
 
