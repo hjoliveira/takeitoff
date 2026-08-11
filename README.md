@@ -1,6 +1,6 @@
 # TakeItOff
 
-A World of Warcraft addon for version 12.0 (Midnight) that alerts you when specific items are equipped.
+A World of Warcraft addon for version 12.1 (Midnight) that alerts you when specific items are equipped.
 
 ## Features
 
