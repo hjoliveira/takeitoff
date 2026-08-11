@@ -1,4 +1,4 @@
-## Interface: 120000
+## Interface: 120100
 ## Title: Take It Off
 ## Notes: Alerts you when specific items are equipped
 ## Author: hjoliveira
